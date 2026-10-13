@@ -90,7 +90,7 @@ export const login = async (req, res) => {
             profile: user.profile
         }
 
-        return res.status(200).cookie("token", token, { maxAge: 1 * 24 * 60 * 60 * 1000, httpOnly: true, sameSite: 'strict' }).json({
+        return res.status(200).cookie("token", token, { maxAge: 1 * 24 * 60 * 60 * 1000, httpOnly: true, sameSite: 'none', path : "/" }).json({
             message: `Welcome back ${user.fullname}`,
             user,
             success: true
@@ -106,7 +106,7 @@ export const getMe = async (req, res) => {
     try {
         const user = await User.findById(req.id).select("-password");
 
-        if(!user) {
+        if (!user) {
             return res.status(404).json({
                 message: "User not found",
                 success: false
@@ -115,56 +115,58 @@ export const getMe = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            user
+            user,
         });
 
     } catch (error) {
+        console.error("Get me error:", error);
+
         return res.status(500).json({
-            message: "Server error",
-            success: false
+            success: false,
+            message: "Failed to fetch user",
         });
     }
 }
 
 export const logout = async (req, res) => {
-    try{
-        return res.status(200).cookie("token", "", {maxAge:0}).json({
-            message:"Logged out successfully",
+    try {
+        return res.status(200).cookie("token", "", { maxAge: 0 }).json({
+            message: "Logged out successfully",
             success: true
         })
 
-    } catch(error){
+    } catch (error) {
         console.log(error);
     }
 }
 
 export const updateProfile = async (req, res) => {
-    try{
+    try {
 
-        const {fullname, email, phoneNumber, bio, skills} = req.body;
+        const { fullname, email, phoneNumber, bio, skills } = req.body;
         const file = req.file;
 
         let skillsArray;
 
-        if(skills){
+        if (skills) {
             skillsArray = skills.split(",");
         }
 
         const userId = req.id;
         let user = await User.findById(userId);
 
-        if(!user){
+        if (!user) {
             return res.status(400).json({
                 message: "User not found.",
                 success: false
             })
         }
 
-        if(fullname) user.fullname = fullname;
-        if(email) user.email = email
-        if(phoneNumber) user.phoneNumber = phoneNumber;
-        if(bio) user.profile.bio = bio;
-        if(skills) user.profile.skills = skillsArray;
+        if (fullname) user.fullname = fullname;
+        if (email) user.email = email
+        if (phoneNumber) user.phoneNumber = phoneNumber;
+        if (bio) user.profile.bio = bio;
+        if (skills) user.profile.skills = skillsArray;
 
 
         await user.save();
@@ -185,7 +187,7 @@ export const updateProfile = async (req, res) => {
         })
 
 
-    } catch (error){
+    } catch (error) {
         console.log(error);
     }
 }
