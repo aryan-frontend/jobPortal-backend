@@ -17,8 +17,8 @@ const corsOptions = {
         "https://job-portal-frontend-ib6o.vercel.app"
     ],
     credentials: true,
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"]
+    // methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    // allowedHeaders: ["Content-Type", "Authorization"]
 };
 
 app.use(cors(corsOptions));
